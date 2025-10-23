@@ -15,7 +15,7 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".MessagesActivity"
+            android:name=".LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".MessagesActivity"
             android:exported="true">
         </activity>
     </application>
