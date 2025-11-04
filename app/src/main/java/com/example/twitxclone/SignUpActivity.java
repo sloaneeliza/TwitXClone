@@ -3,12 +3,23 @@ package com.example.twitxclone;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.twitxclone.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class SignUpActivity extends AppCompatActivity {
@@ -16,6 +27,26 @@ public class SignUpActivity extends AppCompatActivity {
     EditText usernameText;
     EditText passwordText;
     EditText dobText;
+
+    FirebaseDatabase database;
+    FirebaseAuth auth;
+
+    OnCompleteListener<AuthResult> listener = new OnCompleteListener() {
+        @Override
+        public void onComplete(@NonNull Task task) {
+            if(task.isSuccessful()){
+                DatabaseReference usersReference = database.getReference("users");
+                String uid = usersReference.push().getKey();
+                User user = new User(); //our User class
+                user.setDob(dobText.getText().toString());
+                user.setEmail(usernameText.getText().toString());
+                usersReference.child(uid).setValue(user);
+            } else {
+                Exception e = task.getException();
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +61,9 @@ public class SignUpActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
     }
 
 
@@ -38,6 +72,8 @@ public class SignUpActivity extends AppCompatActivity {
         String password = passwordText.getText().toString();
         String dob = dobText.getText().toString();
 
+
+        auth.createUserWithEmailAndPassword(usern,password).addOnCompleteListener(this, listener);
 
     }
 
