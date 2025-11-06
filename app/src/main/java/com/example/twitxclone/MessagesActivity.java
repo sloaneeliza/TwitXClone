@@ -1,5 +1,6 @@
 package com.example.twitxclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.twitxclone.model.Message;
+import com.example.twitxclone.model.User;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -22,6 +26,8 @@ public class MessagesActivity extends AppCompatActivity {
 
     private final List<Message> messageList = new ArrayList<>();
     private MessageAdapter adapter;
+
+    FirebaseDatabase database;
 
     EditText messageField;
     TextView userTextView;
@@ -35,7 +41,9 @@ public class MessagesActivity extends AppCompatActivity {
         newMessage.setAuthor(username);
         newMessage.setMessage(message);
         newMessage.setPublishedAt(new GregorianCalendar().getTimeInMillis());
-//        mDatabase.child(mDatabase.push().getKey()).setValue(newMessage);
+
+        DatabaseReference mDatabase = database.getReference("messages");
+        mDatabase.child(mDatabase.push().getKey()).setValue(newMessage);
 
         messageField.getText().clear();
     }
@@ -51,11 +59,22 @@ public class MessagesActivity extends AppCompatActivity {
             return insets;
         });
 
+        database = FirebaseDatabase.getInstance();
+
+        Intent t = getIntent();
+        String email = t.getStringExtra(User.N_KEY);
+        String dob = t.getStringExtra(User.DOB_KEY);
+
+
         messageField = findViewById(R.id.message_input);
         userTextView = findViewById(R.id.username);
+        TextView dobTextView = findViewById(R.id.dob);
         listView = (ListView) findViewById(R.id.listView);
         adapter = new MessageAdapter(this, messageList);
         listView.setAdapter(adapter);
+
+        userTextView.setText(email);
+        userTextView.setText(dob);
 
     }
 }

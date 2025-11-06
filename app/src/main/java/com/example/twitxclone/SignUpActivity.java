@@ -1,5 +1,6 @@
 package com.example.twitxclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -71,6 +72,9 @@ public class SignUpActivity extends AppCompatActivity {
         String usern = usernameText.getText().toString();
         String password = passwordText.getText().toString();
         String dob = dobText.getText().toString();
+
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
 
 
         auth.createUserWithEmailAndPassword(usern,password).addOnCompleteListener(this, listener);
